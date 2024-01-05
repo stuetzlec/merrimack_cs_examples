@@ -24,10 +24,9 @@ public class CSC2620_Unit0_ReviewOfOOP {
         for(Payable e : employees ){
             System.out.println(e.getPaid());
         }
-//        
+        
 //        System.out.println(employees.get(0).getPaid());
 //        System.out.println(employees.get(1).getPaid());
-        
 
     }
     
