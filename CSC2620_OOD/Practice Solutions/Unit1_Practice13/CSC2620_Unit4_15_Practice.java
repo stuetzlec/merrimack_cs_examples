@@ -1,4 +1,4 @@
-package csc2620_unit0_13_practice;
+package polymorph_example;
 
 import java.util.Arrays;
 
