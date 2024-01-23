@@ -1,0 +1,53 @@
+SETUP
+------
+
+0. Stop NetworkMager
+  a. systemctl stop NetworkManager
+
+1. Add the NICs to the trusted zone (a restart of the firewall will correct things)
+   a. firewall-cmd --zone=trusted --change-interface=<AP NIC>
+   b. firewall-cmd --zone=trusted --change-interface=<INF NIC>
+
+2. Bring the interface down and up again with a 10.0.0.1 IP address
+   a. ip link set down <AP NIC>
+   b. ip addr add 10.0.0.1/24 dev <AP NIC>
+   c. ip link set up <AP NIC>
+
+3. Start hostapd with the specified configuration
+  a. hostapd hostapd.conf
+
+4. Start dnsmasq
+  a. dnsmasq -C dnsmasq.conf -d
+
+5. Turn on IP masquerading for the trusted zone.
+   a. firewall-cmd --zone=trusted --add-masquerade
+
+6. Forward traffic.
+  a. Forward traffic received by the AP NIC to the "infrastructure" NIC
+  b. Forward traffic received by the "infrastructure" NIC to the AP NIC.
+
+  firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -o <INF NIC> -j MASQUERADE
+  firewall-cmd --direct --add-rule ipv4 filter FORWARD 0 -i <AP NIC> -o <INF NIC> -j ACCEPT
+  firewall-cmd --direct --add-rule ipv4 filter FORWARD 0 -i <INF NIC> -o <AP NIC> -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+
+  For example:
+  firewall-cmd --zone=trusted --add-masquerade
+  firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -o wlp0s20f0u2 -j MASQUERADE
+  firewall-cmd --direct --add-rule ipv4 filter FORWARD 0 -i wlp2s0 -o wlp0s20f0u2 -j ACCEPT
+  firewall-cmd --direct --add-rule ipv4 filter FORWARD 0 -i wlp0s20f0u2 -o wlp2s0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+
+CLEANUP
+-------
+1. restart firewalld to clean up the rules.
+  a. systemctl restart firewalld
+
+2. Stop hostapd
+  a. pkill hostapd
+
+3. Stop dnsmasq
+  a. pkill dnsmasq
+
+4. Start NetworkManager
+  a. systemctl start NetworkManager
