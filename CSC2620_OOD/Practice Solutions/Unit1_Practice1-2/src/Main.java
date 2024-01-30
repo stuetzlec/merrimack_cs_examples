@@ -62,7 +62,7 @@ public class Main {
         sc = new Scanner(System.in);
         String lookfor = sc.next();
         // Check to see if the word is there
-        if( ((LinkedList)wordHT.get(hash_s(lookfor))).indexOf(lookfor) > 0 ) {
+        if( ((LinkedList)wordHT.get(hash_s(lookfor))) != null && ((LinkedList)wordHT.get(hash_s(lookfor))).indexOf(lookfor) > 0 ) {
             System.out.println("Yes, found it!");
         }
         else {
