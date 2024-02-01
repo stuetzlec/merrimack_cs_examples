@@ -12,7 +12,7 @@ public class MyMackExample {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ArrayList<CommunityMember> warriors = new ArrayList();
+        ArrayList<Payable> warriors = new ArrayList();
 
         //CommunityMember m = new CommunityMember("Barty", "bartyT@merrimack.edu", 1);
         Student s = new Student("Sammy", "sammyc@merrimack.edu", 2, 3.1);
@@ -28,7 +28,7 @@ public class MyMackExample {
 
         for (int i = 0; i < warriors.size(); i++) {
             if (warriors.get(i) instanceof Payable) {
-                payroll((Payable) warriors.get(i));
+                payroll(warriors.get(i));
             }
         }
 
