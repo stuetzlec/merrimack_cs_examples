@@ -1,4 +1,4 @@
-package csc2620_textareaexample;
+package csc2620_checkboxexample;
 
 import javax.swing.JFrame;
 
@@ -6,7 +6,7 @@ import javax.swing.JFrame;
  *
  * @author stuetzlec
  */
-public class CSC2620_TextAreaExample {
+public class CSC2620_CheckBoxExample {
 
     /**
      * @param args the command line arguments
