@@ -1,59 +1,45 @@
-package csc2620_checkboxexample;
+package csc2620;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.*;
 
-public class GUIDemo extends JFrame {
-    private JTextField textField1;
-    private JCheckBox boldJCheckBox;
-    private JCheckBox italicJCheckBox;
+public class GUIDemo extends JFrame implements ItemListener {
 
-    // Constructor
+    private JPanel cards; //a panel that uses CardLayout
+    private static String BUTTONPANEL = "Card with JButtons";
+    private static String TEXTPANEL = "Card with JTextField";
+
     public GUIDemo() {
-        super("JCheckBox Demo"); // The name of the window
-        setLayout(new FlowLayout()); // A type of layout
+        // Put the JComboBox in a JPanel to get a nicer look.
+        JPanel comboBoxPanel = new JPanel(); //use FlowLayout
+        String comboBoxItems[] = {BUTTONPANEL, TEXTPANEL};
+        JComboBox cb = new JComboBox(comboBoxItems);
+        cb.setEditable(false);
+        cb.addItemListener(this);
+        comboBoxPanel.add(cb);
 
-        // Add a text field...the two parameters to this method are
-        // the 'default text', and the width of the text input
-        textField1 = new JTextField("Watch the Font Change", 20);
-        // Set the default font
-        textField1.setFont(new Font("Serif", Font.PLAIN, 14));
-        this.add(textField1);
+        // Create the "cards"
+        JPanel card1 = new JPanel();
+        card1.add(new JButton("Button 1"));
+        card1.add(new JButton("Button 2"));
+        card1.add(new JButton("Button 3"));
+        JPanel card2 = new JPanel();
+        card2.add(new JTextField("TextField", 20));
+ 
+        // Create the panel that contains the "cards"
+        cards = new JPanel(new CardLayout());
+        cards.add(card1, BUTTONPANEL);
+        cards.add(card2, TEXTPANEL);
+        
+        // Add the panels to the frame
+        this.add(comboBoxPanel, BorderLayout.PAGE_START);
+        this.add(cards, BorderLayout.CENTER);
+    }
 
-        // Add the check boxes (with labels)
-        boldJCheckBox = new JCheckBox("Bold");
-        italicJCheckBox = new JCheckBox("Italic");
-        this.add(boldJCheckBox);
-        this.add(italicJCheckBox);
-
-        // We have to add event handlers
-        CheckBoxHandler handler = new CheckBoxHandler();
-        boldJCheckBox.addItemListener(handler);
-        italicJCheckBox.addItemListener(handler);
-    } // end of GUIDemo
-
-    // The private class to handle events (not an ActionListener)
-    private class CheckBoxHandler implements ItemListener {
-        // MUST implement the method itemStateChanged:
-        public void itemStateChanged(ItemEvent event) {
-            // Create a new Font object
-            Font font = null;
-
-            // Set the font object accordingly
-            if (boldJCheckBox.isSelected() && italicJCheckBox.isSelected())
-                font = new Font("Serif", Font.BOLD + Font.ITALIC, 14);
-            else if (boldJCheckBox.isSelected())
-                font = new Font("Serif", Font.BOLD, 14);
-            else if (italicJCheckBox.isSelected())
-                font = new Font("Serif", Font.ITALIC, 14);
-            else
-                font = new Font("Serif", Font.PLAIN, 14);
-
-            // Set the font
-            textField1.setFont(font);
-        } // end of itemStateChanged
-
-    } // end of class CheckBoxHandler
-} // end of class GUIDemo
+    public void itemStateChanged(ItemEvent evt) {
+        CardLayout cl = (CardLayout) (cards.getLayout());
+        cl.show(cards, (String) evt.getItem());
+    }
+}

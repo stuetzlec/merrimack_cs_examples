@@ -1,4 +1,4 @@
-package csc2620_checkboxexample;
+package csc2620;
 
 import javax.swing.JFrame;
 
@@ -6,7 +6,7 @@ import javax.swing.JFrame;
  *
  * @author stuetzlec
  */
-public class CSC2620_CheckBoxExample {
+public class CSC2620_CardLayoutExample {
 
     /**
      * @param args the command line arguments
