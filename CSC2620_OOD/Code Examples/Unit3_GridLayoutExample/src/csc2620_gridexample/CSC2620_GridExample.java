@@ -1,4 +1,4 @@
-package csc2620_buttonexample;
+package csc2620_gridexample;
 
 import javax.swing.JFrame;
 
@@ -6,7 +6,7 @@ import javax.swing.JFrame;
  *
  * @author stuetzlec
  */
-public class CSC2620_ButtonExample {
+public class CSC2620_GridExample {
 
     /**
      * @param args the command line arguments

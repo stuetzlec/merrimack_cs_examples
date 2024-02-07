@@ -1,9 +1,11 @@
+package csc2620_gridexample;
+
 import java.awt.*;
 import javax.swing.*;
 
 public class GUIDemo extends JFrame {
     // 5 Labels
-    private JLabel[] labels = {new JLabel("This is Label1"),
+    private final JLabel[] labels = {new JLabel("This is Label1"),
        new JLabel("This is Label2"), new JLabel("This is Label3"),
        new JLabel("This is Label4"), new JLabel("This is Label5")};
 
