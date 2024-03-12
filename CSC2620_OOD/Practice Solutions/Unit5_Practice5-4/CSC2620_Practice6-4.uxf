@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>960</y>
+      <w>230</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>CSC2620_Unit3_PizzaShoppe</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>790</y>
+      <w>230</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>/MenuItem/
+--
+- name : String
+--
+/+ getTotalPrice() : double/
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>100</x>
+      <y>500</y>
+      <w>350</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>/PizzaMenuItem/
+--
+- pricePerTopping : double
+- basePrice : double
+- toppings : ArrayList *
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, b : double, t : double)
++ addTopping( t : String ) : void
++ getTotalPrice() : double
++ toString() : String
+- getToppings() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>460</x>
+      <y>500</y>
+      <w>350</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>/SandwichBasedItem/
+--
+- meat : String
+- cheese : String
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, m : String, c : String)
++ getTotalPrice() : double
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>230</y>
+      <w>260</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>Calzone
+--
+- sauces : ArrayList&lt;String&gt; *
+- pricePerSauce : double
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, 
+    b : double, t : double, s : double)
++ addSauce( s : String ) : void
+- getSauces() : String
++ getTotalPrice() : double
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>280</x>
+      <y>230</y>
+      <w>260</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>Pizza
+--
+- size : char
+- sizeModifier : double
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, 
+    b : double, t : double, c : char)
+- getSizeString() : String
++ getTotalPrice() : double
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>550</x>
+      <y>230</y>
+      <w>260</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Wrap
+--
+- wrapType : String
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, 
+    m : String, c : String, t : String )
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>550</x>
+      <y>70</y>
+      <w>320</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>Sandwich
+--
+- toppings : ArrayList&lt; String &gt; *
+--
+&lt;&lt;Constructor&gt;&gt;( n : String, 
+    m : String, c : String, toppings : String * )
++ toString() : String
+- getToppings() : String
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>650</x>
+      <y>200</y>
+      <w>230</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;300.0;160.0;170.0;210.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>320</y>
+      <w>80</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;180.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>280</x>
+      <y>380</y>
+      <w>140</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;120.0;120.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>120</x>
+      <y>390</y>
+      <w>180</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>160.0;110.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>630</x>
+      <y>610</y>
+      <w>140</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;180.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>280</x>
+      <y>660</y>
+      <w>450</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>430.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>770</y>
+      <w>460</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>Model
+--
+--
+&lt;&lt;Constructor&gt;&gt;()
++ addMenuItem( item : String, paras : String * ): MenuItem
++ getItems() : ArrayList&lt; MenuItem &gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>1030</y>
+      <w>460</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>ViewController
+--
+--
++ addmenuItem( name : String, paras : String * ): MenuItem
++ printReceipt() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>820</y>
+      <w>170</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+items
+m1= 1
+m2= *</panel_attributes>
+    <additional_attributes>10.0;20.0;150.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>220</x>
+      <y>920</y>
+      <w>70</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+model
+m1= 1
+m2= 1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>960</y>
+      <w>170</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+view
+m1= 1
+m2= 1
+</panel_attributes>
+    <additional_attributes>10.0;100.0;150.0;10.0</additional_attributes>
+  </element>
+</diagram>
