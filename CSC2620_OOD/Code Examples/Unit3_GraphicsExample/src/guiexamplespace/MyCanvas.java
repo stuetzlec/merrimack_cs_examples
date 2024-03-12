@@ -19,8 +19,6 @@ public class MyCanvas extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        System.out.println("WTF");
-
         // If you want to use the Graphics2D library:
         Graphics2D g2 = (Graphics2D) g;
         
