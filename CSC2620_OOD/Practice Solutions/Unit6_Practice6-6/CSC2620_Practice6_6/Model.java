@@ -1,4 +1,4 @@
-package CSC2620_Practice6_5;
+package CSC2620_Practice6_6;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,13 +79,17 @@ public class Model {
         return a;
     }
     
+    /**
+     * @param boxes
+     * @return
+     */
     public CategoryDataset createDataset( JCheckBox[] boxes ) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         String[] letters = new String[26];
         for( int i = 0 ; i < 26 ; i++ ) {
             letters[i] = boxes[i].getText();
             System.out.println("Adding: " + histogram.get(boxes[i].getText().charAt(0)));
-            dataset.addValue(histogram.get(boxes[i].getText().charAt(0)), "Number", boxes[i].getText());
+            dataset.addValue(histogram.get(boxes[i].getText().charAt(0)), "Number", boxes[i].getText() );
         }         
 
       return dataset; 

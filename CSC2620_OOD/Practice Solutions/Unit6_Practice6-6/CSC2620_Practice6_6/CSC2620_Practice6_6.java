@@ -1,4 +1,4 @@
-package CSC2620_Practice6_5;
+package CSC2620_Practice6_6;
 
 import java.io.FileNotFoundException;
 import javax.swing.JFrame;
@@ -7,7 +7,7 @@ import javax.swing.JFrame;
  *
  * @author Chris
  */
-public class CSC2620_Practice6_5 {
+public class CSC2620_Practice6_6 {
 
     /**
      * @param args the command line arguments

@@ -1,4 +1,4 @@
-package CSC2620_Practice6_5;
+package CSC2620_Practice6_6;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
