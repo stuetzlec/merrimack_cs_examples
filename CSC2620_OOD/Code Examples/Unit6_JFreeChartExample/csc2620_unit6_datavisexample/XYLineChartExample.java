@@ -9,9 +9,9 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -65,11 +65,11 @@ public class XYLineChartExample extends JFrame {
 		int width = 640;
 		int height = 480;
 		
-		try {
-			ChartUtilities.saveChartAsPNG(imageFile, chart, width, height);
-		} catch (IOException ex) {
-			System.err.println(ex);
-		}
+		//try {
+		//	ChartUtilities.saveChartAsPNG(imageFile, chart, width, height);
+		//} catch (IOException ex) {
+		//	System.err.println(ex);
+		//}
 		
 		return new ChartPanel(chart);
 	}
