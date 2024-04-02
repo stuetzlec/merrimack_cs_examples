@@ -37,7 +37,7 @@ public class Canvas extends JPanel {
             s1.switchDirection();
             s2.switchDirection();
 
-            //explodeParticles();
+            explodeParticles();
         }
 
         g.clearRect(0, 0, 1000, 800);
