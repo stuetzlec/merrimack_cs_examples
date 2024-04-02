@@ -17,7 +17,7 @@ public class CSC2620_Practice6_6 {
         Model model = new Model();
         ViewController view = new ViewController( model );
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        view.setSize(1400,1000);
+        view.setSize(800,600);
         view.setVisible(true);
         
         

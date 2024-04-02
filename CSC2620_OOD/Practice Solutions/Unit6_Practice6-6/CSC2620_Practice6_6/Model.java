@@ -88,7 +88,7 @@ public class Model {
         String[] letters = new String[26];
         for( int i = 0 ; i < 26 ; i++ ) {
             letters[i] = boxes[i].getText();
-            System.out.println("Adding: " + histogram.get(boxes[i].getText().charAt(0)));
+//            System.out.println("Adding: " + histogram.get(boxes[i].getText().charAt(0)));
             dataset.addValue(histogram.get(boxes[i].getText().charAt(0)), "Number", boxes[i].getText() );
         }         
 

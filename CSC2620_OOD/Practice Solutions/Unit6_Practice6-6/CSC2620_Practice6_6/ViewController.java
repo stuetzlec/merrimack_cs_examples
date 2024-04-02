@@ -27,7 +27,7 @@ public class ViewController extends JFrame {
     private JTextArea wordslist;
 
     public ViewController(Model _data) {
-        super("Practice 5.2");
+        super("Practice 6.6");
         setLayout(new GridBagLayout());
 
         model = _data;

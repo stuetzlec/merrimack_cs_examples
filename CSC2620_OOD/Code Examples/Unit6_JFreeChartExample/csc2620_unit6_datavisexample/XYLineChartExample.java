@@ -61,9 +61,9 @@ public class XYLineChartExample extends JFrame {
 		customizeChart(chart);
 		
 		// saves the chart as an image files (optional)
-		File imageFile = new File("XYLineChart.png");
-		int width = 640;
-		int height = 480;
+		//File imageFile = new File("XYLineChart.png");
+		//int width = 640;
+		//int height = 480;
 		
 		//try {
 		//	ChartUtilities.saveChartAsPNG(imageFile, chart, width, height);
