@@ -16,7 +16,7 @@ public class CSC2620_Unit8_PatternMatching {
      */
     public static void main(String[] args) {
         
-        // The matches method, Section 9.1.3
+        // The matches method, Section 8.3
        // String searchString = "This is the string that I am going to search over.";
        // System.out.println(searchString.matches(searchString));
        // System.out.println(searchString.matches("This(.)*")); // True
@@ -31,35 +31,9 @@ public class CSC2620_Unit8_PatternMatching {
         // Using the "matcher" approach:
        // matcherTest();
         
-        // Practice 9.2:
+        // Practice 8.3:
         System.out.println( indexOf("This is a heavy search string", "[aeiou]{2}") );
     }
-    
-    /**
-     * A method demonstrating the use of matcher, described in section 6.2
-     */
-    public static void matcherTest( ) {
-      // String to be scanned to find the pattern.
-      String line = "This is a weighty search string";
-      // The regex to use (what substrings of line does it match?)
-      String pattern = "[aeiou]{2}";  
-
-      // Create a Pattern object from the regex - must be compiled
-      Pattern r = Pattern.compile(pattern);
-
-      // Now create matcher object from the pattern (call .matcher on your pattern)
-      Matcher m = r.matcher(line);
-      
-      // Find all instances of pattern in line and report them
-      while (m.find( )) {
-          // The 0 group uses the entire regular expression...see below
-          System.out.println("Found value: " + m.group(0) );
-      }
-      
-      // Note: You can also create a regular expression with parenthetical
-      //   groups (group(1), group(2), etc.), and find each one individually
-      // (see https://www.tutorialspoint.com/java/java_regular_expressions.htm
-   }
     
     
     
