@@ -6,25 +6,25 @@ import java.util.regex.Pattern;
 public class Unit8_RegEx_Examples {
 
     public static void main(String[] args) {
-        //String g = "Gluck, it's a weird word, I know";
+        /*String g = "Gluck, it's a weird word, I know";
         
-        //System.out.println(g.matches("Gluck"));
-        //System.out.println(g.matches("^Gluck(.)*"));
+        System.out.println(g.matches("Gluck"));
+        System.out.println(g.matches("^Gluck(.)*"));
         
-        //String[] splitArray = g.split(",\\s+");
-        //System.out.println(splitArray[1]);
-        //System.out.println(splitArray[3]);
+        String[] splitArray = g.split(",\\s+");
+        System.out.println(splitArray[1]);
+        System.out.println(splitArray[2]);
         
-        //g = g.replaceAll(",\\s+", "#");
-        //System.out.println(g);
-         
+        g = g.replaceAll(",\\s+", "#");
+        System.out.println(g);
+         */
 
-        //matcherTest();
+        matcherTest();
 
     }
 
     public static void matcherTest() {
-        
+        /*
         // String to be scanned to find the pattern.
         String line = "This is a weighty search string";
         // The regex to use (what substrings of line does it match?)
@@ -41,16 +41,16 @@ public class Unit8_RegEx_Examples {
             // The 0 group uses the entire regular expression...see below
             
         }
-        
+        */
         // String to be scanned to find the pattern.
-        line = "This order was placed for QT3000! OK?";
-        pattern = "(.*)(\\d+)(.*)";
+        String line = "This order was placed for QT3000! OK?";
+        String pattern = "(\\D*)(\\d+)(.*)";
 
         // Create a Pattern object
-        r = Pattern.compile(pattern);
+        Pattern r = Pattern.compile(pattern);
 
         // Now create matcher object.
-        m = r.matcher(line);
+        Matcher m = r.matcher(line);
         if (m.find()) {
             System.out.println("Found value: " + m.group(0));
             System.out.println("Found value: " + m.group(1));

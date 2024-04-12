@@ -44,22 +44,8 @@ public class CSC2620_Unit8_PatternMatching {
      * @param regex The regular expression to find the first instance of in searchString
      */
     private static int indexOf(String searchString, String regex) {
-        // Generate a random string that doesn't exist in searchString
-        Random rng = new Random();
-        String randString = "0";
-        while( searchString.contains(randString) ) {
-            randString += Integer.toString(rng.nextInt());
-        }
         
-        // Now we know that randString exists nowhere in searchString;
-        searchString = searchString.replaceFirst(regex, randString);
-        
-        // Is it a problem that we've re-assigned searchString?
-        return searchString.indexOf(randString);
-        
-        // Alternative Method (thanks to Alexia F.)
-        //return searchString.split(regex)[0].length();
-        // Or use matcher to get the match and use indexOf to find it.
+        return searchString.split(regex)[0].length();
     }
 }
    
