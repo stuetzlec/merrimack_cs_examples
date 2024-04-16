@@ -94,25 +94,4 @@ public class ChatWindow extends JFrame implements Runnable {
         }
     }
 
-    /**
-     *
-     */
-    @Override
-    public void finalize() {
-        // close the connection 
-        try {
-            in.close();
-            out.close();
-            connectionToServer.close();
-        } catch (IOException i) {
-            System.err.println("Error closing connection on chat window.");
-        } finally {
-            try {
-                super.finalize();
-            } catch (Throwable ex) {
-                System.err.println("Runnable can't finalize");
-            }
-        }
-    }
-
 }
