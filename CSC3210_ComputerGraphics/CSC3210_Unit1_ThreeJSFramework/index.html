@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Three.js Framework Example</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1200" height="900"></canvas>
+
+    <script type="module">
+import * as THREE from 'three';
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 100;  
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+/* CREATE/DRAW STUFF HERE */
+
+renderer.render( scene, camera );
+    </script>
+</body>
+</html>
