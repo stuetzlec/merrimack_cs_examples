@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three.js BuffedGeometry Example</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1200" height="900"></canvas>
+
+    <script type="module">
+import * as THREE from 'three';
+
+// Create the object to represent a triangle
+function Triangle (a, aCol, b, bCol, c, cCol) {
+    // Build the vertices and colors manually by creating arrays
+    this.vertices = [
+      a[0], a[1], a[2],
+      b[0], b[1], b[2],
+      c[0], c[1], c[2],
+    ];
+    this.colors = [
+      aCol[0], aCol[1], aCol[2],
+      bCol[0], bCol[1], bCol[2],
+      cCol[0], cCol[1], cCol[2]
+    ];
+
+  // The function that actually adds the triangle geometry to the scene
+  this.render = function() {
+    var geometry = new THREE.BufferGeometry();
+    // Set the "position" attribute accordingly
+    // Note: itemSize = 3 (third argument) because there are 3 values (components) per vertex
+    geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array(this.vertices), 3 ) );
+    geometry.setAttribute( 'color', new THREE.BufferAttribute( new Float32Array(this.colors), 3 ) );
+    // Indicate that the material's vertexColors are based on the color attribute of vertexes
+    var material = new THREE.MeshBasicMaterial( { vertexColors: true } );
+    this.mesh= new THREE.Mesh( geometry, material );
+    scene.add(this.mesh);
+  }	
+}
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 3;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+//renderer.setSize(window.innerWidth, window.innerHeight);
+
+var tri = new Triangle([0,0,0], [0.5,0,0], [0.5,0,0], [0,1.0,0], [0.5,0.5,0], [0,0,1.0] );
+tri.render();
+
+renderer.render( scene, camera );
+    </script>
+</body>
+</html>
