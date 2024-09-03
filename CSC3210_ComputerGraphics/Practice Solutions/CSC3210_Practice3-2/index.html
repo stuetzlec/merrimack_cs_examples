@@ -1,19 +1,21 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Three.js Framework Example</title>
+    <title>Three.js Triangle Example</title>
 </head>
 <body>
 
-    <canvas id="myCanvas" width="800" height="800"></canvas>
+    <canvas id="myCanvas" width="1200" height="800"></canvas>
 
-    <script src="three.js"></script>
-	
-    <script>
-// A class for an octagon
+    <script type="module">
+import * as THREE from 'three';
+
+// An object for an octagon
 function Octagon( a, b, c, d, e, f, g, h ){
   
 }
-// A class to produce a Square
+
+// An object to produce a Square
 function Square( a, aCol, b, bCol, c, cCol, d, dCol ) {
   this.tri1 = new Triangle( a, aCol, b, bCol, c, cCol );
   this.tri2 = new Triangle( a, aCol, c, cCol, d, dCol );
@@ -46,15 +48,12 @@ function Triangle (a, aCol, b, bCol, c, cCol) {
     geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array(this.vertices), 3 ) );
     geometry.setAttribute( 'color', new THREE.BufferAttribute( new Float32Array(this.colors), 3 ) );
     // Indicate that the material's vertexColors are based on the color attribute of vertexes
-    var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
+    var material = new THREE.MeshBasicMaterial( { vertexColors: true } );
     this.mesh= new THREE.Mesh( geometry, material );
     scene.add(this.mesh);
   }	
 }
 
-    </script>
-
-    <script>
 var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
