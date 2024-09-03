@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pratice 2.4</title>
+</head>
+<body>
+
+    <script>
+
+// Practice 2.4 Part A)
+// An object for 4x4 matrices
+Matrix4x4 = function() {
+    // Initialize the matrix as a 4x4 array filled with zeros
+    this.matrix = Array(4).fill().map(() => Array(4).fill(0));
+
+    // Practice 2.4 Part B)
+    // Function to populate the matrix with random digits between 1 and 10
+    this.populateMatrix = function() {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                this.matrix[i][j] = Math.floor(Math.random() * 10) + 1;
+            }
+        }
+    };
+
+    // Practice 2.4 Part C)
+    // Function to print the matrix
+    this.printMatrix = function() {
+        for (let i = 0; i < this.matrix.length; i++) {
+            // The join() method of Array instances creates and 
+            //   returns a new string by concatenating all of the 
+            //   elements in this array, separated by commas or a 
+            //   specified separator string, such as a space in
+            //   this example:
+            console.log(this.matrix[i].join(' '));
+        }
+    };
+    
+    // Practice 2.4 Part D)
+    // Function to multiply this matrix but another matrix
+    this.multiplyMatrix = function(otherMatrix) {
+        var resultMatrix = new Matrix4x4();
+
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                for (let k = 0; k < 4; k++) {
+                    resultMatrix.matrix[i][j] += this.matrix[i][k] * otherMatrix.matrix[k][j];
+                }
+            }
+        }
+
+        return resultMatrix;
+    }
+
+};
+
+
+
+// Practice 2.4 Part E)
+// Testing
+let mat1 = new Matrix4x4();
+mat1.populateMatrix();
+mat1.printMatrix();
+console.log();  // Add a blank line
+
+let mat2 = new Matrix4x4();
+mat2.populateMatrix();
+mat2.printMatrix();
+console.log();  // Add a blank line
+
+let mat3 = mat1.multiplyMatrix(mat2);
+mat3.printMatrix();
+
+    </script>
+</body>
+</html>
