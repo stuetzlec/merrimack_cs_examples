@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pratice 2.6</title>
+</head>
+<body>
+
+    <script>
+// Practice 2.6 Part 2.a
+// An object for defininig a cube:
+Cube = function(x) {
+    this.radius = x;
+    this.corners = [ [0,0,0], [x,0,0], [x,x,0], [0,x,0],
+                [0,0,x], [x,0,x], [x,x,x], [0,x,x] ];
+    
+    this.setRadius = function(x){
+        this.radius = x;
+    }
+
+    this.getVolume = function(){
+        return Math.pow(this.radius,3);
+    }
+}
+
+// Practice 2.6 Part 2.b
+Tetrahedron = function(A,B,C,D) {
+    // The corners
+    this.A = A;
+    this.B = B;
+    this.C = C;
+    this.D = D;
+    
+    this.getVolume = function() {
+        const matrixDeterminant = function(matrix) {
+            return (
+                matrix[0][0] * (
+                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
+                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
+                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
+                ) -
+                matrix[0][1] * (
+                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
+                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
+                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
+                ) +
+                matrix[0][2] * (
+                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
+                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
+                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
+                ) -
+                matrix[0][3] * (
+                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
+                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
+                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
+                )
+            );
+        };
+
+        const matrix = [
+            [this.A[0], this.A[1], this.A[2], 1],
+            [this.B[0], this.B[1], this.B[2], 1],
+            [this.C[0], this.C[1], this.C[2], 1],
+            [this.D[0], this.D[1], this.D[2], 1]
+        ];
+
+        const determinant = matrixDeterminant(matrix);
+        const volume = Math.abs(determinant) / 6;
+
+        return volume;
+    }   
+
+}
+
+
+var newCube = new Cube(1);
+var newTetra = new Tetrahedron([0,0,0], [0,1,0], [1,0,0], [0,0,1]);
+
+console.log(newCube.getVolume());
+console.log(newTetra.getVolume());
+
+    </script>
+</body>
+</html>
