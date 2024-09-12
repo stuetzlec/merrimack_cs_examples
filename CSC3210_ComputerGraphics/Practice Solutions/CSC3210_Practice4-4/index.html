@@ -1,0 +1,103 @@
+<html>
+<head>
+    <title>CSC 3210 Practice 4.4</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1000" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from 'three';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 8;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+// Practice 4.4 #1a - List of ~10 random points
+var geometry = new THREE.BufferGeometry();
+var positions = [];
+for( var i = 0 ; i < 30 ; i++ ){
+  positions[i] = ( Math.random() - 0.5 ) * 2;
+}
+var rolledPositions = [];
+var count = 0;
+for( var i = 0 ; i < 10 ; i++ ){
+    rolledPositions[i] = new THREE.Vector3(positions[count], positions[count+1], positions[count+2]);
+    count += 3;
+}
+geometry.setAttribute( 'position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+
+// Practice 4.4 #1b - Drawing the points
+var material = new THREE.PointsMaterial( { size: 6, sizeAttenuation: false, color: 0xab2323 } );
+var points = new THREE.Points( geometry, material );
+scene.add( points );
+
+// Practice 4.4 #1c - Creating the ConvexGeometry around the points:
+var convexGeometry = new ConvexGeometry( rolledPositions );
+var convexMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var mesh = new THREE.Mesh( convexGeometry, convexMaterial );
+scene.add( mesh );
+
+// Practice 4.4 #1d - A function and registration for toggling the convex object on and off
+function toggle() { 
+   mesh.visible = !mesh.visible;
+}
+
+// Practice 4.4 #3
+var geometry2 = new THREE.BufferGeometry();
+var verts = [
+  1.1, 1.1, 0.0,
+  1.9, 1.1, 0.0,
+  1.9, 1.9, 0.0,
+
+  1.1, 1.1, 0.0,
+  1.9, 1.9, 0.0,
+  1.1, 1.9, 0.0 
+];
+var cols = [
+  1.0, 0.0, 0.0,
+  0.0, 1.0, 0.0,
+  0.0, 0.0, 1.0,
+
+  1.0, 0.0, 0.0,
+  0.0, 0.0, 1.0,
+  1.0, 1.0, 1.0
+];
+geometry2.setAttribute('position', new THREE.BufferAttribute( new Float32Array(verts), 3 ) );
+geometry2.setAttribute('color', new THREE.BufferAttribute( new Float32Array(cols), 3 ) );
+var material2 = new THREE.MeshBasicMaterial ({vertexColors: true });
+var mesh2 = new THREE.Mesh( geometry2, material2 );
+scene.add( mesh2 );
+
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+	requestAnimationFrame( animate );
+	renderer.render( scene, camera );
+}
+animate();
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 84: // The 'T' key
+      toggle();
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
