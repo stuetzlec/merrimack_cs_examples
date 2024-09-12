@@ -17,11 +17,6 @@ camera.position.z = 50;
 camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
 scene.add( camera );
 
-const light = new THREE.PointLight(0xffffff, 1000)
-// Play with this to move the light around
-light.position.set(0,0,50)
-scene.add(light)
-
 var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
 renderer.setClearColor(0x000000);
 // If you want this to span the window, instead of using the myCanvas object, use the window object
@@ -32,13 +27,13 @@ renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
 // Set up the geometries
 var geometry = new THREE.SphereGeometry( 5, 32, 32 );
 geometry.translate(25.0, 0.0, 0.0);
-var material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 var sphere = new THREE.Mesh( geometry, material );
 scene.add( sphere );
 
 var geometry2 = new THREE.TorusGeometry( 10, 3, 16, 100 );
 geometry2.translate(-25.0, 0.0, 0.0);
-var material2 = new THREE.MeshPhongMaterial( { color: 0xffff00 }  );
+var material2 = new THREE.MeshBasicMaterial( { color: 0xffff00 }  );
 var torus = new THREE.Mesh( geometry2, material2 );
 scene.add( torus );
 
