@@ -12,8 +12,8 @@ uniform float delta;
 
 void main() 
 {
-    // Move the object to the left.
-    gl_Position =  vec4(position.x - 0.4, position.y, position.z, 1.0);
+    // Move the object to the side.
+    gl_Position =  vec4(position.x + delta, position.y, position.z, 1.0);
 }
 	</script>
 
@@ -50,8 +50,16 @@ var mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
 
 // Create the animation by producing a "render loop"
+var change = 0.01;
+var boundary = 1.5;
 render();
 function render() {
+    // Move the ball to the side, until it's off the screen, then reverse direction
+    mesh.material.uniforms.delta.value += change;
+    if( Math.abs(mesh.material.uniforms.delta.value) > boundary ){
+        change = -1.0 * change;
+    }
+
     // Render the scene as normal
     renderer.render(scene, camera);
     requestAnimationFrame(render); // call it again!
