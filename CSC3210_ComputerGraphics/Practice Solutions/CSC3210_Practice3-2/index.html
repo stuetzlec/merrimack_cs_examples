@@ -5,7 +5,7 @@
 </head>
 <body>
 
-    <canvas id="myCanvas" width="1200" height="800"></canvas>
+    <canvas id="myCanvas"></canvas>
 
     <script type="module">
 import * as THREE from 'three';
@@ -66,7 +66,8 @@ renderer.setClearColor(0x000000);
 // If you want this to span the window, instead of using the myCanvas object, use the window object
 renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
 // If you want the render to span the window, uncomment this
-renderer.setSize(window.innerWidth, window.innerHeight);
+//renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(900, 600);
 
 var tri = new Triangle([0,0,0], [0.5,0,0], [0.5,0,0], [0,1.0,0], [0.5,0.5,0], [0,0,1.0] );
 tri.render();

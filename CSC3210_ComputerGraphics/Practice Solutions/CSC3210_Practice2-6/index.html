@@ -8,17 +8,17 @@
     <script>
 // Practice 2.6 Part 2.a
 // An object for defininig a cube:
-Cube = function(x) {
-    this.radius = x;
-    this.corners = [ [0,0,0], [x,0,0], [x,x,0], [0,x,0],
-                [0,0,x], [x,0,x], [x,x,x], [0,x,x] ];
+Cube = function(side) {
+    this.side = aside;
+    this.corners = [ [0,0,0], [side,0,0], [side,side,0], [0,side,0],
+                [0,0,side], [side,0,side], [side,side,side], [0,side,side] ];
     
-    this.setRadius = function(x){
-        this.radius = x;
+    this.setSide = function(side){
+        this.side = side;
     }
 
     this.getVolume = function(){
-        return Math.pow(this.radius,3);
+        return Math.pow(this.side,3);
     }
 }
 
@@ -30,6 +30,7 @@ Tetrahedron = function(A,B,C,D) {
     this.C = C;
     this.D = D;
     
+    // Courtesy of ChatGPT
     this.getVolume = function() {
         const matrixDeterminant = function(matrix) {
             return (

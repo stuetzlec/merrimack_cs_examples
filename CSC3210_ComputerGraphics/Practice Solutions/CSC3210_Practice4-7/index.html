@@ -1,0 +1,73 @@
+<html>
+<head>
+    <title>CSC 3210 Practice 4.7</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1000" height="1000"></canvas>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+uniform float delta;
+
+void main() 
+{
+    // Can change the impact of delta here
+    float displacement = delta * .1;
+    // The vertex displacement is simply the sine of delta
+    vec3 p = position;
+    p += displacement*p;
+
+    gl_Position =  vec4(p, 1.0);
+}
+	</script>
+
+
+    <script type="module">
+import * as THREE from 'three';
+
+// In Three.js, shaders are applied to meshes just like colors, 
+//   through the use of materials
+var customUniforms = {
+    delta: {value: 0}
+};
+var material = new THREE.ShaderMaterial({
+    uniforms: customUniforms,
+    vertexShader: document.getElementById('vertexShader').textContent
+});
+
+
+// Set up the scene
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 500 );
+camera.position.z = 35;
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0) );
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+
+// Create a second object whose shading will be the same as the box
+var geometry = new THREE.SphereGeometry( .50, 32, 32 );
+var mesh = new THREE.Mesh( geometry, material );
+scene.add( mesh );
+
+// Create the animation by producing a "render loop"
+render();
+var localDelta = 0;
+function render() {
+    // The delta changes with the frames
+    //   Adjust this to adjust the speed
+    localDelta += 0.03;
+
+    // Update the uniform value for delta
+    mesh.material.uniforms.delta.value = Math.sin(localDelta);
+
+    // Render the scene as normal
+    renderer.render(scene, camera);
+    requestAnimationFrame(render); // call it again!
+}
+    </script>
+</body>
+</html>
