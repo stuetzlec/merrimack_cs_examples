@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title>Three.js Geometries Example</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+out float rand;  // Pass to the fragment shader
+
+// Used to get random numbers
+// Found here https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+float random( vec2 p )
+{
+    vec2 K1 = vec2(
+        23.14069263277926, // e^pi (Gelfond's constant)
+         2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    );
+    return fract( cos( dot(p,K1) ) * 12345.6789 );
+}
+
+void main() 
+{
+    // Grab a random number based on the position of the vertex
+    rand = random( vec2( position.x, position.y ) );
+
+    // You need the "projectionMatrix * viewMatrix * modelMatrix" which is part of ShaderMaterial
+    // Without this, WebGL assumes all coordinates are within -1.0 and 1.0, which our sphere is not (check its definition)
+    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    // Uncomment this and watch it DISAPPEAR because of the above assumption
+//    gl_Position = vec4( position, 1.0 );
+}
+	</script>
+
+    <script type="x-shader/x-fragment" id="fragShader">
+// Input from earlier in the pipeline, the vertex shader
+in float rand;
+
+void main() 
+{
+    
+    gl_FragColor = vec4(1.0, rand, 1.0-rand, 1.0);
+}
+	</script>
+
+    <script type="module">
+import * as THREE from 'three';
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 500 );
+camera.position.z = 50;
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+// Set up the geometries
+var geometry = new THREE.SphereGeometry( 15, 32, 32 );
+
+// The "ShaderMaterial" defines and calculates projectionMatrix, viewMatrix, and modelMatrix behind the scenes
+//   This means that you do not need to define them or alter them, but DO need to include them in your
+//   vertex shader. 
+// If you want to do everything manually, you would use the RawShaderMaterial object
+var material = new THREE.ShaderMaterial( {
+  vertexShader: document.getElementById("vertexShader").innerText,
+  fragmentShader: document.getElementById("fragShader").innerText
+} );
+
+var sphere = new THREE.Mesh( geometry, material );
+scene.add( sphere );
+
+function render() {
+    sphere.rotateY(.01);
+
+    requestAnimationFrame(render); // call it again!
+    renderer.render( scene, camera );
+}
+
+render();
+    </script>
+</body>
+</html>
