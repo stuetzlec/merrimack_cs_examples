@@ -29,7 +29,7 @@ void main()
     // Without this, WebGL assumes all coordinates are within -1.0 and 1.0, which our sphere is not (check its definition)
     gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
     // Uncomment this and watch it DISAPPEAR because of the above assumption
-//    gl_Position = vec4( position, 1.0 );
+ //   gl_Position = vec4( position, 1.0 );
 }
 	</script>
 

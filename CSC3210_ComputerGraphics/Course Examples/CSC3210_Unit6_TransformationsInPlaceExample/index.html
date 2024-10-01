@@ -1,0 +1,165 @@
+<html>
+<head>
+    <title>Three.js Transformations Example</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+out float rand;  // Pass to the fragment shader
+
+// Used to get random numbers
+// Found here https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+float random( vec2 p )
+{
+    vec2 K1 = vec2(
+        23.14069263277926, // e^pi (Gelfond's constant)
+         2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    );
+    return fract( cos( dot(p,K1) ) * 12345.6789 );
+}
+
+void main() 
+{
+    // Grab a random number based on the position of the vertex
+    rand = random( vec2( position.x, position.y ) );
+
+    // You need the "projectionMatrix * viewMatrix * modelMatrix" which is part of ShaderMaterial
+    // Without this, WebGL assumes all coordinates are within -1.0 and 1.0, which our sphere is not (check its definition)
+    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    // Uncomment this and watch it DISAPPEAR because of the above assumption
+ //   gl_Position = vec4( position, 1.0 );
+}
+	</script>
+
+
+    <script type="x-shader/x-fragment" id="fragShader">
+// Input from earlier in the pipeline, the vertex shader
+in float rand;
+
+void main() 
+{
+    
+    gl_FragColor = vec4(1.0, rand, 1.0-rand, 1.0);
+}
+	</script>
+
+    <script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// Have a few variables to control the camera
+var xLookAt = 0;
+var yLookAt = 0;
+var zLookAt = 0;
+var turnSpeed = 0.4;
+var animateRotation = false;
+var animateOtherRotation = false;
+var cameraRotation = 0.0;
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 15;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true, depth: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const controls = new OrbitControls( camera, renderer.domElement );
+
+// The shader program
+var material = new THREE.ShaderMaterial( {
+  vertexShader: document.getElementById("vertexShader").innerText,
+  fragmentShader: document.getElementById("fragShader").innerText
+} );
+
+// Add another sphere
+var sphereTranslation = 2.0;
+var boxTranslation = 3.0;
+var geometry = new THREE.SphereGeometry( 2, 32, 32 );
+var boxGeometry = new THREE.BoxGeometry(1,1,1);
+
+var sphere = new THREE.Mesh( geometry, material );
+sphere.position.set( sphereTranslation, 0.0, 0.0 );
+scene.add( sphere );
+
+var box = new THREE.Mesh(boxGeometry, material );
+box.position.set(0.0, boxTranslation, 0.0);
+scene.add( box );
+
+
+var count = 0
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+  // This doesn't work because we are not applying the transformation to the sphere every frame
+  //sphere.geometry.translate(-sphereTranslation,0.0,0.0);
+  // sphere.geometry.rotateZ(turnSpeed*0.1);
+  //sphere.geometry.translate(sphereTranslation,0.0,0.0);
+
+  // We need to translate the object back to the origin before rotating it:
+  sphere.geometry.rotateZ(turnSpeed*0.1);
+  //sphere.rotation.set( 0.0, 0.0, turnSpeed*0.1);
+
+  // Make the box scale with the sin wave
+  var scaleValue = 0.1 * Math.sin(count++);
+  box.scale.set(1 + scaleValue, 1 + scaleValue, 1 + scaleValue);
+  if(count > 1000000){
+    count = 0;
+  }
+
+  // If we're rotating the camera change that here.
+  if( animateRotation ) 
+    // The applyAxisAngle method rotates about an axis in space
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 0.0 ), turnSpeed * 0.1 );
+  if( animateOtherRotation ) 
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 0.0, 1.0 ), turnSpeed * 0.1 );
+
+  camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt) );
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera );
+}
+animate();
+
+function toggleRotation() {
+  animateRotation = !animateRotation;
+}
+function toggleOtherRotation() {
+  animateOtherRotation = !animateOtherRotation;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 83: // The 'S' key
+      yLookAt -= turnSpeed;
+    break;
+    case 68: // The 'D' key
+      xLookAt += turnSpeed;
+    break;
+    case 65: // The 'A' key
+      xLookAt -= turnSpeed;
+    break;
+    case 87: // The 'W' key
+      yLookAt += turnSpeed;
+    break;
+    case 84: // The 'T' key
+      toggleRotation();
+    break;
+    case 82: // The 'R' key
+      toggleOtherRotation();
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<html>
+<head>
+    <title>Three.js Transformation About an Axis Example</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+out float rand;  // Pass to the fragment shader
+
+// Used to get random numbers
+// Found here https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+float random( vec2 p )
+{
+    vec2 K1 = vec2(
+        23.14069263277926, // e^pi (Gelfond's constant)
+         2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    );
+    return fract( cos( dot(p,K1) ) * 12345.6789 );
+}
+
+void main() 
+{
+    // Grab a random number based on the position of the vertex
+    rand = random( vec2( position.x, position.y ) );
+
+    // You need the "projectionMatrix * viewMatrix * modelMatrix" which is part of ShaderMaterial
+    // Without this, WebGL assumes all coordinates are within -1.0 and 1.0, which our sphere is not (check its definition)
+    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    // Uncomment this and watch it DISAPPEAR because of the above assumption
+ //   gl_Position = vec4( position, 1.0 );
+}
+	</script>
+
+
+    <script type="x-shader/x-fragment" id="fragShader">
+// Input from earlier in the pipeline, the vertex shader
+in float rand;
+
+void main() 
+{
+    
+    gl_FragColor = vec4(1.0, rand, 1.0-rand, 1.0);
+}
+	</script>
+
+    <script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+
+// From https://stackoverflow.com/questions/26660395/rotation-around-an-axis-three-js
+// In order to rotate about an axis, you must construct the rotation matrix (which will rotate about the axis by default)
+// Note: You can also use Quaternions or Euler angles, which you may see if you search online
+//    That is beyond what I'd like to go over in this course, but feel free to experiment
+function rotateAboutWorldAxis(object, axis, angle) {
+  var rotationMatrix = new THREE.Matrix4();
+  rotationMatrix.makeRotationAxis( axis.normalize(), angle );
+  var currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+  var newPos = currentPos.applyMatrix4(rotationMatrix);
+  object.position.x = newPos.x;
+  object.position.y = newPos.y;
+  object.position.z = newPos.z;
+}
+
+// Have a few variables to control the camera
+var xLookAt = 0;
+var yLookAt = 0;
+var zLookAt = 0;
+var turnSpeed = 0.4;
+var animateRotation = false;
+var animateOtherRotation = false;
+var cameraRotation = 0.0;
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 15;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true, depth: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const controls = new OrbitControls( camera, renderer.domElement );
+// The shader program
+var material = new THREE.ShaderMaterial( {
+  vertexShader: document.getElementById("vertexShader").innerText,
+  fragmentShader: document.getElementById("fragShader").innerText
+} );
+
+// Add another sphere
+var sphereTranslation = 2.0;
+var geometry = new THREE.SphereGeometry( 2, 32, 32 );
+var sphere = new THREE.Mesh( geometry, material );
+sphere.position.set( sphereTranslation, sphereTranslation, sphereTranslation );
+scene.add( sphere );
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+
+  // We need to translate the object back to the origin before rotating it:
+  rotateAboutWorldAxis( sphere, new THREE.Vector3(1.0, 1.0, 0.0), turnSpeed*0.1);
+  // Rotate while we rotate:
+  // Comment this in to see it rotate in place while we rotate in space
+  //sphere.geometry.rotateZ(turnSpeed*0.1);
+
+  // If we're rotating the camera change that here.
+  //if( animateRotation ) 
+  //  // The applyAxisAngle method rotates about an axis in space
+  //  camera.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 1.0 ), turnSpeed * 0.1 );
+  //if( animateOtherRotation ) 
+  //  camera.position.applyAxisAngle( new THREE.Vector3(0.0, 0.0, 1.0 ), turnSpeed * 0.1 );
+
+  camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt) );
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera );
+}
+animate();
+
+function toggleRotation() {
+  animateRotation = !animateRotation;
+}
+function toggleOtherRotation() {
+  animateOtherRotation = !animateOtherRotation;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 83: // The 'S' key
+      yLookAt -= turnSpeed;
+    break;
+    case 68: // The 'D' key
+      xLookAt += turnSpeed;
+    break;
+    case 65: // The 'A' key
+      xLookAt -= turnSpeed;
+    break;
+    case 87: // The 'W' key
+      yLookAt += turnSpeed;
+    break;
+    case 84: // The 'T' key
+      toggleRotation();
+    break;
+    case 82: // The 'R' key
+      toggleOtherRotation();
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
