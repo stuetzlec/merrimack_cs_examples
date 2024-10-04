@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Three.js Right-Hand Rule Example</title>
+</head>
+<body>
+
+    <h1> Press 'T' to toggle front-back culling </h1>
+    <canvas id="myCanvas" width="1200" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from 'three';
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 15;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(0.0,0.0,0.0));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+//renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+// Create two triangles, one facing the camera and one facing away
+var sphere1 = new THREE.SphereGeometry( 4, 32, 32 );
+sphere1.translate( -5, 0 ,0 );
+var material1 = new THREE.MeshNormalMaterial();
+var mesh1 = new THREE.Mesh( sphere1, material1 );
+scene.add( mesh1 );
+var sphere2 = new THREE.SphereGeometry( 4, 32, 32 );
+sphere2.translate( 5, 0, 0 );
+var material2 = new THREE.MeshNormalMaterial();
+var mesh2 = new THREE.Mesh( sphere2, material2 );
+scene.add( mesh2 );
+
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+	requestAnimationFrame( animate );
+	renderer.render( scene, camera );
+}
+animate();
+
+// This function toggles which triangle is "front-facing"
+function toggle() {
+  if( material2.side == THREE.FrontSide )
+    material2.side = THREE.BackSide;
+  else
+    material2.side = THREE.FrontSide;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 84: // The 'T' key
+      toggle();
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
