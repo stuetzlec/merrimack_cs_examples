@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>Three.js Textures Example </title>
+</head>
+<body>
+
+    <h1> Press 'T' to toggle front-back culling </h1>
+    <canvas id="myCanvas" width="1200" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from 'three';
+
+function main() {
+  const canvas = document.getElementById("myCanvas");
+  const renderer = new THREE.WebGLRenderer({canvas});
+
+  const fov = 75;
+  const aspect = 2;  // the canvas default
+  const near = 0.1;
+  const far = 5;
+  const camera = 
+    new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.z = 2;
+
+  const scene = new THREE.Scene();
+
+  const boxWidth = 1;
+  const boxHeight = 1;
+  const boxDepth = 1;
+  const geometry = 
+    new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+  const cubes = [];  // an array we use to rotate the cubes
+  
+  // Here, we create the material and load it
+  const loader = new THREE.TextureLoader();
+  const material = new THREE.MeshBasicMaterial({
+    // Use the map attribute to hold the texture
+    map: loader.load('https://threejsfundamentals.org/threejs/resources/images/wall.jpg'),
+  });
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+  cubes.push(cube);  // add to our list of cubes to rotate
+
+  function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = 
+        canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
+  }
+
+  function render(time) {
+    time *= 0.001;
+
+    if (resizeRendererToDisplaySize(renderer)) {
+      const canvas = renderer.domElement;
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+
+    cubes.forEach((cube, ndx) => {
+      const speed = .2 + ndx * .1;
+      const rot = time * speed;
+      cube.rotation.x = rot;
+      cube.rotation.y = rot;
+    });
+
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+}
+
+main();
+
+    </script>
+</body>
+</html>
