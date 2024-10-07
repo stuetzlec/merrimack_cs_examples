@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>CSC3210 Practice 5.5</title>
+</head>
+<body>
+
+    <h1> Toggles: Move camera target with 'WASD' keys, Rotations with 'T' and 'R'</h1>
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from "three";
+
+// Have a few variables to control the camera
+var xLookAt = 0;
+var yLookAt = 0;
+var zLookAt = 0;
+var turnSpeed = 0.4;
+var animateRotation = false;
+var animateOtherRotation = false;
+var cameraRotation = 0.0;
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 15;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+// Add another sphere
+var sphere1 = new THREE.SphereGeometry(0.50, 32, 32);
+sphere1.translate(0.2, 0.0, 0.5);
+var sphere2 = new THREE.SphereGeometry(0.50, 32, 32);
+sphere2.translate(0.0, 0.0, -0.5);
+var sphereMaterial = new THREE.MeshLambertMaterial( {color: 0x8888ff} ); 
+var sphere1Mesh = new THREE.Mesh( sphere1, sphereMaterial );
+scene.add( sphere1Mesh );
+var sphereMaterial2 = new THREE.MeshLambertMaterial( {color: 0xff0000} ); 
+var sphere2Mesh = new THREE.Mesh( sphere2, sphereMaterial2 );
+scene.add( sphere2Mesh );
+
+// Lights will be covered in Unit 7
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
+directionalLight.position.y = 10.0;
+scene.add( directionalLight );
+var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.75 );
+directionalLight2.position.y = -10.0;
+scene.add( directionalLight2 );
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+  // If we're rotating the camera change that here.
+  if( animateRotation ) 
+    // The applyAxisAngle method rotates about an axis in space
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 0.0 ), turnSpeed * 0.1 );
+  if( animateOtherRotation ) 
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 0.0, 1.0 ), turnSpeed * 0.1 );
+
+  camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt) );
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera );
+}
+animate();
+
+function toggleRotation() {
+  animateRotation = !animateRotation;
+}
+function toggleOtherRotation() {
+  animateOtherRotation = !animateOtherRotation;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 83: // The 'S' key
+      yLookAt -= turnSpeed;
+    break;
+    case 68: // The 'D' key
+      xLookAt += turnSpeed;
+    break;
+    case 65: // The 'A' key
+      xLookAt -= turnSpeed;
+    break;
+    case 87: // The 'W' key
+      yLookAt += turnSpeed;
+    break;
+    case 84: // The 'T' key
+      toggleRotation();
+    break;
+    case 82: // The 'R' key
+      toggleOtherRotation();
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
