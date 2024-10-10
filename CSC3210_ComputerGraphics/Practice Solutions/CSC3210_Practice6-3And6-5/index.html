@@ -1,0 +1,187 @@
+<html>
+<head>
+    <title>Three.js Practice 6.3/6.6</title>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+out float rand;  // Pass to the fragment shader
+
+// Used to get random numbers
+// Found here https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+float random( vec2 p )
+{
+    vec2 K1 = vec2(
+        23.14069263277926, // e^pi (Gelfond's constant)
+         2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    );
+    return fract( cos( dot(p,K1) ) * 12345.6789 );
+}
+
+void main() 
+{
+    // Grab a random number based on the position of the vertex
+    rand = random( vec2( position.x, position.y ) );
+
+    // You need the "projectionMatrix * viewMatrix * modelMatrix" which is part of ShaderMaterial
+    // Without this, WebGL assumes all coordinates are within -1.0 and 1.0, which our sphere is not (check its definition)
+    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    // Uncomment this and watch it DISAPPEAR because of the above assumption
+ //   gl_Position = vec4( position, 1.0 );
+}
+	</script>
+
+
+
+    <script type="x-shader/x-fragment" id="fragShader">
+// Input from earlier in the pipeline, the vertex shader
+in float rand;
+
+void main() 
+{
+    
+    gl_FragColor = vec4(0.3, rand, 1.0-rand, 1.0);
+}
+	</script>
+
+
+    <script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+
+// From https://stackoverflow.com/questions/26660395/rotation-around-an-axis-three-js
+// In order to rotate about an axis, you must construct the rotation matrix (which will rotate about the axis by default)
+// Note: You can also use Quaternions or Euler angles, which you may see if you search online
+//    That is beyond what I'd like to go over in this course, but feel free to experiment
+function rotateAboutWorldAxis(object, axis, angle) {
+  var rotationMatrix = new THREE.Matrix4();
+  rotationMatrix.makeRotationAxis( axis.normalize(), angle );
+  var currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+  var newPos = currentPos.applyMatrix4(rotationMatrix);
+  object.position.x = newPos.x;
+  object.position.y = newPos.y;
+  object.position.z = newPos.z;
+}
+
+// Have a few variables to control the camera
+var xLookAt = 0;
+var yLookAt = 0;
+var zLookAt = 0;
+var turnSpeed = 0.4;
+var animateRotation = false;
+var animateOtherRotation = false;
+var cameraRotation = 0.0;
+var sphere1RadiusScalar = 1.0; // This value will change with scaling.
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 15;  // Try moving this around!
+camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true, depth: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+// Create two spheres in a group
+var sphere1Geometry = new THREE.SphereGeometry(2,32,32);
+var sphere2Geometry = new THREE.SphereGeometry(2,32,32);
+
+// The shader program
+var material = new THREE.ShaderMaterial( {
+  vertexShader: document.getElementById("vertexShader").innerText,
+  fragmentShader: document.getElementById("fragShader").innerText
+} );
+
+var sphere1 = new THREE.Mesh( sphere1Geometry, material );
+sphere1.position.set(2,-2,0);
+var sphere2 = new THREE.Mesh( sphere2Geometry, material );
+sphere2.position.set(-2,2,0);
+var sphereGroup = new THREE.Group();
+sphereGroup.add( sphere1 );
+sphereGroup.add( sphere2 );
+scene.add( sphereGroup );
+
+// Some vectors for use
+var crossProduct = new THREE.Vector3();
+var lineBetween = new THREE.Vector3( sphere1.position.x - sphere2.position.x, 
+                                     sphere1.position.y - sphere2.position.y, 
+                                     sphere1.position.z - sphere2.position.z );
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+  // To get the axis of rotation, find the cross product of the line connecting the centers:
+  crossProduct.crossVectors( new THREE.Vector3(0,0,1), lineBetween ).normalize();
+
+  // Rotate it about the crossProduct, the perpendicular vector (one of infinitely
+  //    many) between the spheres
+  rotateAboutWorldAxis( sphere1, crossProduct, turnSpeed*0.1);
+  rotateAboutWorldAxis( sphere2, crossProduct, turnSpeed*0.1);
+
+  // Have the entire group rotate about the Z axis
+  //   Notice it won't move unless you translate it.
+  rotateAboutWorldAxis( sphereGroup, new THREE.Vector3(0,0,1), turnSpeed*0.1);
+
+  // If we want the entire group to rotate about the XY axis:
+//  sphereGroup.rotateX(0.01);
+//  sphereGroup.rotateY(0.01);
+
+  camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt) );
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera );
+}
+animate();
+
+function toggleRotation() {
+  animateRotation = !animateRotation;
+}
+function toggleOtherRotation() {
+  animateOtherRotation = !animateOtherRotation;
+}
+
+// Helper function to determine if the two spheres are too close to each other
+//   to scale one of them up
+function checkCollisions() {
+  // The distance between the two spheres to begin with was math.sqrt(32)
+  return (sphere1RadiusScalar * 1.1) * 2.0 + 2.0 >= Math.sqrt(32);
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 83: // The 'S' key
+      sphereGroup.position.y -= 0.2;
+    break;
+    case 68: // The 'D' key
+     sphereGroup.position.x += 0.2;
+    break;
+    case 65: // The 'A' key
+     sphereGroup.position.x -= 0.2;
+    break;
+    case 87: // The 'W' key
+     sphereGroup.position.y += 0.2;
+    break;
+    case 61: // The '+' key - SCALE UP
+      if( !checkCollisions() ) {
+        sphere1RadiusScalar += sphere1RadiusScalar * 0.1;
+        sphere1.scale.setScalar( sphere1RadiusScalar );
+      }
+    break;
+    case 173: // The '-' key - SCALE DOWN
+      sphere1RadiusScalar -= sphere1RadiusScalar * 0.1;
+      sphere1.scale.setScalar( sphere1RadiusScalar );
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
