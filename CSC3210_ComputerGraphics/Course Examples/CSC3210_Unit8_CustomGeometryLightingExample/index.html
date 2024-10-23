@@ -1,0 +1,179 @@
+<html>
+<head>
+    <title>CSC3210 Custom Geometry Lighting</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="1000" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from "three";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+
+// Have a few variables to control the camera
+var xLookAt = 0;
+var yLookAt = 0;
+var zLookAt = 0;
+var turnSpeed = 0.4;
+var animateRotation = false;
+var animateOtherRotation = false;
+var cameraRotation = 0.0;
+
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 3000 );
+camera.position.z = 5;
+camera.position.y = 0;
+camera.position.x = 0;
+camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
+scene.add( camera );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true, depth: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+//renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+//renderer.setSize(window.innerWidth, window.innerHeight);
+
+const controls = new OrbitControls( camera, renderer.domElement );
+
+// Add the custom geometry
+const vertices = [
+      // front
+      { pos: [-1, -1,  1], norm: [ -0.577, -0.577, 0.577 ], uv: [0, 0], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ 1, -1,  1], norm: [ 0.577, -0.577, 0.577 ], uv: [1, 0], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ 1,  1,  1], norm: [ -0.577, 0.577, 0.577 ], uv: [0, 1], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ -1,  1,  1], norm: [ 0.577,  0.577, 0.577 ], uv: [1, 1], color: [1.0, 1.0, 1.0 ]},
+      { pos: [-1, -1,  -1], norm: [ -0.577, -0.577, -0.577 ], uv: [0, 0], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ 1, -1,  -1], norm: [ 0.577, -0.577, -0.577 ], uv: [1, 0], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ 1,  1,  -1], norm: [ -0.577, 0.577, -0.577 ], uv: [0, 1], color: [1.0, 1.0, 1.0 ]},
+      { pos: [ -1,  1,  -1], norm: [ 0.577, 0.577, -0.577 ], uv: [1, 1], color: [1.0, 1.0, 1.0 ]}
+];
+const positions = [];
+const normals = [];
+const uvs = [];
+const colors = []
+for (const vertex of vertices) {
+      positions.push(...vertex.pos);
+      normals.push(...vertex.norm);
+      uvs.push(...vertex.uv);
+      colors.push(...vertex.color);
+}
+
+const geometry = new THREE.BufferGeometry();
+const positionNumComponents = 3;
+const normalNumComponents = 3;
+const uvNumComponents = 2;
+geometry.setAttribute( 'position',
+          new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
+geometry.setAttribute( 'normal',
+          new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
+geometry.setAttribute( 'uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
+geometry.setAttribute( 'color',
+          new THREE.BufferAttribute(new Float32Array(colors), 3));
+const indices = new Uint16Array([
+   0, 1, 2,  2, 3, 0,  // Front face
+   4, 7, 5,  5, 7, 6,  // Back face
+   3, 2, 6,  6, 7, 3,  // Top face
+   0, 4, 1,  4, 5, 1,  // Bottom face
+   1, 5, 6,  6, 2, 1,  // Right face
+   0, 3, 4,  3, 7, 4  // Left face
+]);
+geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+
+// The material is MeshPhongMaterial or MeshLambertMaterial
+var material = new THREE.MeshPhongMaterial( { vertexColors: true } );
+//var material = new THREE.MeshLambertMaterial( { vertexColors: true } );
+var mesh = new THREE.Mesh( geometry, material);
+scene.add(mesh);
+
+// *** CREATE THE LIGHTING ***
+var lights = [];
+
+lights.push(new THREE.AmbientLight( 0xffffff, 0.6 )); 
+scene.add( lights[0] );
+
+lights.push(new THREE.DirectionalLight( 0xff0000, 1.0 )); 
+lights[1].position.z = 10;
+const DHelper = new THREE.DirectionalLightHelper(lights[1]);
+scene.add( DHelper );
+scene.add( lights[1] );
+
+lights.push(new THREE.PointLight(0x00ff00, 1.0, 10, 0.0));
+lights[2].position.z = -5;
+lights[2].position.y = 6;
+scene.add(lights[2]);
+
+// white spotlight shining from the side, modulated by a texture, casting a shadow 
+lights.push( new THREE.SpotLight( 0xffff, 10.0 ) ); 
+lights[3].position.set( 0, -2, 0 ); 
+scene.add( lights[3] );
+// Lighting helper example:
+const SHelper = new THREE.SpotLightHelper(lights[3])
+scene.add(SHelper)
+
+const skyColor = 0xB1E1FF;  // light blue
+const groundColor = 0xB97A20;  // brownish orange
+const intensity = 1;
+lights.push( new THREE.HemisphereLight(skyColor, groundColor, intensity));
+scene.add(lights[4]);
+
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+  // If we're rotating the camera change that here.
+  if( animateRotation ) 
+    // The applyAxisAngle method rotates about an axis in space
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 0.0 ), turnSpeed * 0.1 );
+  if( animateOtherRotation ) 
+    camera.position.applyAxisAngle( new THREE.Vector3(0.0, 0.0, 1.0 ), turnSpeed * 0.1 );
+
+  camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt) );
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera );
+}
+animate();
+
+function toggleRotation() {
+  animateRotation = !animateRotation;
+}
+function toggleOtherRotation() {
+  animateOtherRotation = !animateOtherRotation;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 84: // The 'T' key
+      toggleRotation();
+    break;
+    case 82: // The 'R' key
+      toggleOtherRotation();
+    break;
+    case 65: // The 'A' key
+      lights[0].visible = !lights[0].visible;
+    break;
+    case 68: // The 'D' key
+      lights[1].visible = !lights[1].visible;
+    break;
+    case 80: // The 'P' key
+      lights[2].visible = !lights[2].visible;
+    break;
+    case 83: // The 'S' key
+      lights[3].visible = !lights[3].visible;
+    break;
+    case 76: // The 'L' key
+      lights[4].visible = !lights[4].visible;
+    break;
+    case 72: // The 'H' key
+      SHelper.visible = !SHelper.visible;
+      DHelper.visible = !DHelper.visible;
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+
+    </script>
+</body>
+</html>
