@@ -1,0 +1,133 @@
+<html>
+<head>
+    <title>CSC3210 Practice 8.6/8.8</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+
+    <script type="module">
+import * as THREE from "three";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+class MyCamera {
+  constructor(xLA, yLA, zLA) {
+    this.xLookAt = xLA;
+    this.yLookAt = yLA;
+    this.zLookAt = zLA;
+    this.turnSpeed = 0.1;
+    this.animateRotation = false;
+    this.animateOtherRotation = false;
+    this.cameraRotation = 0.1;
+
+    this.cam = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
+    this.cam.position.z = 15;
+    this.cam.position.y = 5;
+    this.updateLookAt();
+  }
+
+  updateLookAt() {
+    this.cam.lookAt( new THREE.Vector3( this.xLookAt, this.yLookAt, this.zLookAt ) );
+  }
+}
+
+// Have a few variables to control the camera
+
+var scene = new THREE.Scene();
+var camera = new MyCamera( 0, 0, 0 );
+scene.add( camera.cam );
+
+var renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true, depth: true});
+renderer.setClearColor(0x000000);
+// If you want this to span the window, instead of using the myCanvas object, use the window object
+renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
+// If you want the render to span the window, uncomment this
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+// renderer.physicallyCorrectLights = true;
+const controls = new OrbitControls( camera.cam, renderer.domElement );
+
+// Add the geometry
+var plane = new THREE.PlaneGeometry(10, 10);
+plane.rotateX(-1);
+var planeMat = new THREE.MeshPhongMaterial( {color: 'green'} );
+var planeMesh = new THREE.Mesh( plane, planeMat );
+planeMesh.receiveShadow = true;
+scene.add( planeMesh );
+
+var sphere = new THREE.SphereGeometry(2,32,32);
+sphere.translate( 1, 3, 0 );
+var sphereMat = new THREE.MeshPhongMaterial( {color: 'red'} );
+var sphereMesh = new THREE.Mesh( sphere, sphereMat );
+sphereMesh.castShadow = true;
+sphereMesh.receiveShadow = true;
+scene.add( sphereMesh );
+
+
+
+// Add lights
+var lights = [];
+lights[0] = new THREE.DirectionalLight(  );
+lights[0].position.set(10,10,0);
+lights[0].target.position.set(0,0,0);
+lights[0].castShadow = true;
+lights[0].shadow.mapSize.width = 1024; // try removing these and see what happens
+lights[0].shadow.mapSize.height = 1024;
+scene.add( lights[ 0 ] );
+lights[0].intensity = 0.5;
+
+lights[1] = new THREE.AmbientLight({color: 0x999999}, 0.5);
+scene.add(lights[1]);
+
+lights[2] = new THREE.PointLight();
+lights[2].position.set( -5, 10, 0 );
+lights[2].castShadow = true;
+lights[2].intensity = 15;
+scene.add( lights[2] );
+
+// Use this for not-necessarily-static scenes or scenes you want to animate
+function animate() {
+  // If we're rotating the camera change that here.
+  if( camera.animateRotation ) 
+    // The applyAxisAngle method rotates about an axis in space
+    camera.cam.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 0.0 ), camera.turnSpeed * 0.1 );
+  if( camera.animateOtherRotation ) 
+    camera.cam.position.applyAxisAngle( new THREE.Vector3(0.0, 0.0, 1.0 ), camera.turnSpeed * 0.1 );
+
+  camera.updateLookAt();
+
+  requestAnimationFrame( animate );
+  renderer.render( scene, camera.cam );
+}
+animate();
+
+function toggleRotation() {
+  camera.animateRotation = !camera.animateRotation;
+}
+function toggleOtherRotation() {
+  camera.animateOtherRotation = !camera.animateOtherRotation;
+}
+
+// Simple way to setup keybaord controls:
+function keyHandler(e) {
+  switch(e.keyCode){
+    case 84: // The 'T' key
+      toggleRotation();
+    break;
+    case 82: // The 'R' key
+      toggleOtherRotation();
+    break;
+    case 65: // The 'A' key
+      lights[0].visible = !lights[0].visible;
+    break;
+    case 68: // The 'D' key
+      lights[1].visible = !lights[1].visible;
+    break;
+    case 80: // The 'P' key
+      lights[2].visible = !lights[2].visible;
+    break;
+  }
+}
+document.addEventListener( "keydown", keyHandler, false );
+    </script>
+</body>
+</html>
