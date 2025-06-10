@@ -1,5 +1,0 @@
-{
-    "port" : 5000,
-    "log" : "log.txt",
-    "datadir" : "/home/zach/data"
-}
