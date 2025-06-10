@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 <project name="json-example" default="dist" basedir=".">
   <description>
-    Implementation of let lang.
+  Example of merrimackutil's JSON support
   </description>
 
   <!-- set global properties -->
