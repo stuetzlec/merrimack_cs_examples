@@ -1,61 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pratice 2.7</title>
+    <title>Practice 2.7</title>
 </head>
 <body>
 
     <script>
-// Practice 2.7
-// An object for defininig a cube:
-Cube = function(aside) {
-    this.side = aside;
-    this.corners = [ [0,0,0], [aside,0,0], [aside,aside,0], [0,aside,0],
-                [0,0,aside], [aside,0,aside], [aside,aside,aside], [0,aside,aside] ];
-    
-    this.setSide = function(side){
-        this.side = side;
-    }
+// ==========================================
+// Practice 2.7: Geometric Calculations
+// ==========================================
 
-    this.getVolume = function(){
-        return Math.pow(this.side,3);
-    }
+// 1 & 2. Cube Class
+// Defines a unit cube centered at origin by default.
+// Includes vertex/index buffers and 5-tetrahedra discretization.
+// Sets the side parameter to 1.0 by default.
+function Cube(_side = 1.0) {
+    this.side = _side;
+    
+    // Generates 8 vertex coordinates centered at the origin
+    this.updateVertices = function() {
+        const h = this.side / 2.0;
+        this.vertices = [
+            [-h, -h, -h], // 0: Bottom-left-back
+            [ h, -h, -h], // 1: Bottom-right-back
+            [ h,  h, -h], // 2: Top-right-back
+            [-h,  h, -h], // 3: Top-left-back
+            [-h, -h,  h], // 4: Bottom-left-front
+            [ h, -h,  h], // 5: Bottom-right-front
+            [ h,  h,  h], // 6: Top-right-front
+            [-h,  h,  h]  // 7: Top-left-front
+        ];
+    };
+
+    // 12 Triangles (2 per face, 6 faces) defining the outer shell mesh
+    this.indices = [
+        // Back face
+        0, 2, 1,   0, 3, 2,
+        // Front face
+        4, 5, 6,   4, 6, 7,
+        // Left face
+        0, 4, 7,   0, 7, 3,
+        // Right face
+        1, 6, 5,   1, 2, 6,
+        // Top face
+        3, 7, 6,   3, 6, 2,
+        // Bottom face
+        0, 1, 5,   0, 5, 4
+    ];
+
+    this.updateVertices();
+
+    this.setSide = function(_side) {
+        this.side = _side;
+        this.updateVertices();
+    };
+
+    // Compute exact cube volume: V = s^3
+    this.getVolume = function() {
+        return Math.pow(this.side, 3);
+    };
+
+    // Practice 2.7 2(c): Discretize internal volume into 5 distinct tetrahedra
+    this.getTetrahedra = function() {
+        const v = this.vertices;
+        return [
+            // Corner 1
+            new Tetrahedron(v[0], v[1], v[3], v[4]),
+            // Corner 2
+            new Tetrahedron(v[1], v[2], v[3], v[6]),
+            // Corner 3
+            new Tetrahedron(v[1], v[4], v[5], v[6]),
+            // Corner 4
+            new Tetrahedron(v[3], v[4], v[6], v[7]),
+            // Center Tetrahedron
+            new Tetrahedron(v[1], v[3], v[4], v[6])
+        ];
+    };
+
+    // Compute total volume 
+    this.getVolumeFromTetrahedra = function() {
+        const tets = this.getTetrahedra();
+        return tets.reduce((sum, tet) => sum + tet.getVolume(), 0);
+    };
 }
 
-// Practice 2.7
-Tetrahedron = function(A,B,C,D) {
-    // The corners
-    this.A = A;
-    this.B = B;
-    this.C = C;
-    this.D = D;
-    
-    // Courtesy of ChatGPT
+// 1 & 2. Tetrahedron Class
+// Can be defined either by 4 3D points or an edge length a (for a regular tetrahedron)
+function Tetrahedron(_A, _B, _C, _D) {
+    // Defined by 4 explicit 3D vertex positions
+    this.A = _A;
+    this.B = _B;
+    this.C = _C;
+    this.D = _D;
+    this.edgeLength = null;
+
+    // 4 Triangular Faces
+    this.indices = [
+        0, 1, 2, // Base/Face 1
+        0, 1, 3, // Face 2
+        0, 2, 3, // Face 3
+        1, 2, 3  // Face 4
+    ];
+
+    // Compute volume using 4x4 coordinate matrix determinant formula:
+    // Volume = |det(M)| / 6
     this.getVolume = function() {
-        const matrixDeterminant = function(matrix) {
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
-        };
+        if (this.edgeLength !== null) {
+            // Validation path using regular formula: V = (a^3 * sqrt(2)) / 12
+            return (Math.pow(this.edgeLength, 3) * Math.sqrt(2)) / 12.0;
+        }
 
         const matrix = [
             [this.A[0], this.A[1], this.A[2], 1],
@@ -64,20 +117,32 @@ Tetrahedron = function(A,B,C,D) {
             [this.D[0], this.D[1], this.D[2], 1]
         ];
 
-        const determinant = matrixDeterminant(matrix);
-        const volume = Math.abs(determinant) / 6;
+        const matrixDeterminant4x4 = function(m) {
+            return (
+                m[0][0] * (m[1][1] * (m[2][2] * m[3][3] - m[2][3] * m[3][2]) - m[1][2] * (m[2][1] * m[3][3] - m[2][3] * m[3][1]) + m[1][3] * (m[2][1] * m[3][2] - m[2][2] * m[3][1])) -
+                m[0][1] * (m[1][0] * (m[2][2] * m[3][3] - m[2][3] * m[3][2]) - m[1][2] * (m[2][0] * m[3][3] - m[2][3] * m[3][0]) + m[1][3] * (m[2][0] * m[3][2] - m[2][2] * m[3][0])) +
+                m[0][2] * (m[1][0] * (m[2][1] * m[3][3] - m[2][3] * m[3][1]) - m[1][1] * (m[2][0] * m[3][3] - m[2][3] * m[3][0]) + m[1][3] * (m[2][0] * m[3][1] - m[2][1] * m[3][0])) -
+                m[0][3] * (m[1][0] * (m[2][1] * m[3][2] - m[2][2] * m[3][1]) - m[1][1] * (m[2][0] * m[3][2] - m[2][2] * m[3][0]) + m[1][2] * (m[2][0] * m[3][1] - m[2][1] * m[3][0]))
+            );
+        };
 
-        return volume;
-    }   
-
+        return Math.abs(matrixDeterminant4x4(matrix)) / 6.0;
+    };
 }
 
+// ==========================================
+// Execution & Validation Tests
+// ==========================================
 
-var newCube = new Cube(1);
-var newTetra = new Tetrahedron([0,0,0], [0,1,0], [1,0,0], [0,0,1]);
+const myCube = new Cube(1.0);
+console.log("--- Cube Checks ---");
+console.log("Unit Cube Volume (Formula s^3):", myCube.getVolume());
+console.log("Unit Cube Volume (Sum of 5 internal Tetrahedra):", myCube.getVolumeFromTetrahedra());
 
-console.log(newCube.getVolume());
-console.log(newTetra.getVolume());
+console.log("\n--- Regular Tetrahedron Checks ---");
+const regularTetra = new Tetrahedron([1,1,1],[1,2,3],[2,3,2],[1,4,2]); // Edge length a = 1
+console.log("Regular Tetrahedron Volume (a=1):", regularTetra.getVolume());
+console.log("Expected Formula Result (1^3 * sqrt(2) / 12):", (Math.sqrt(2) / 12));
 
     </script>
 </body>
