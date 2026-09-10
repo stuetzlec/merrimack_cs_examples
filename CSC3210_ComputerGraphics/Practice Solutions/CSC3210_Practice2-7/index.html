@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pratice 2.6</title>
+    <title>Pratice 2.7</title>
 </head>
 <body>
 
     <script>
-// Practice 2.6 Part 2.a
+// Practice 2.7
 // An object for defininig a cube:
-Cube = function(side) {
+Cube = function(aside) {
     this.side = aside;
-    this.corners = [ [0,0,0], [side,0,0], [side,side,0], [0,side,0],
-                [0,0,side], [side,0,side], [side,side,side], [0,side,side] ];
+    this.corners = [ [0,0,0], [aside,0,0], [aside,aside,0], [0,aside,0],
+                [0,0,aside], [aside,0,aside], [aside,aside,aside], [0,aside,aside] ];
     
     this.setSide = function(side){
         this.side = side;
@@ -22,7 +22,7 @@ Cube = function(side) {
     }
 }
 
-// Practice 2.6 Part 2.b
+// Practice 2.7
 Tetrahedron = function(A,B,C,D) {
     // The corners
     this.A = A;
